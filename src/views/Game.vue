@@ -1,20 +1,7 @@
 <template>
   <div class="hello">
-    <div v-if="game.State !== 'lobby'">
-      <h3>missions</h3>
-      <ol>
-        <li v-for="(m, i) in game.Missions">
-          <span v-if="m.Complete">
-            <span v-if="m.Success"> succeeded 🙌</span>
-            <span v-else>failed <span v-for="n in m.NumFails">💥</span></span>
-          </span>
-          <span v-else>
-            Team members required: {{m.Slots}}
-          </span>
-        </li>
-      </ol>
-    </div>
 
+    <transition name="fade">
     <div v-if="game.State === 'lobby'">
       <h2>lobby</h2>
       Game ID: {{game.Id}}
@@ -33,6 +20,9 @@
         <button class="button-primary" @click="send({Type: 'start'})">Start game</button>
       </div>
     </div>
+    </transition>
+
+    <transition name="fade">
     <div v-if="game.State === 'building'">
       <div v-if="you.IsLeader">
         <h2>build a team</h2>
@@ -48,6 +38,9 @@
         Waiting for leader 🎖 to select away team.
       </div>
     </div>
+    </transition>
+
+    <transition name="fade">
     <div v-if="game.State === 'voting'">
       <h2>vote on mission team</h2>
       <p>
@@ -71,6 +64,9 @@
         <span v-if="voted">You voted</span>
       </div>
     </div>
+    </transition>
+
+    <transition name="fade">
     <div v-if="game.State === 'mission'">
       <div v-if="you.OnMission">
         <h2>on mission</h2>
@@ -95,23 +91,29 @@
         Waiting for the players on the mission to vote.
       </div>
     </div>
+    </transition>
+
+    <transition name="fade">
     <div v-if="game.State === 'spywin'">
       <h2>Spies win!</h2>
       <p>Click ready to go back to the lobby</p>
 
       <button @click="send({Type: 'ready'})">Ready</button>
     </div>
+    </transition>
+    <transition name="fade">
     <div v-if="game.State === 'resistancewin'">
       <h2>Spys lose!</h2>
       <p>Click ready to go back to the lobby</p>
 
       <button @click="send({Type: 'ready'})">Ready</button>
     </div>
+    </transition>
 
     <h3>players</h3>
 
-    <div id="players">
-      <div v-for="(p, index) in game.Players" class="flex col center">
+    <transition-group id="players" tag="div" name="list">
+      <div v-for="(p, index) in game.Players" class="flex col center list-item" :key="p.Id">
         <button class="select" v-if="game.State === 'building' && you.IsLeader" @click="toggleteam(index)">Select</button>
         <div class="player" :class="{you: p.Id === you.Id, suspect: suspects.indexOf(p.Id) > -1}" @click="suspect(p)">
           <span style="padding-top: 25px;">{{getName(p)}}</span>
@@ -124,8 +126,9 @@
           </div>
         </div>
       </div>
-    </div>
+    </transition-group>
 
+    <transition name="fade">
     <div v-if="game.State !== 'lobby'">
       <div class="flex center col">
         <button class="pure-button" @click="reveal">Show/Hide spies</button>
@@ -169,14 +172,18 @@
         </tbody>
       </table>
     </div>
+    </transition>
 
+    <transition name="fade">
     <div id="msgs" v-if="msgs.length > 0">
       <p v-for="(m, i) in msgs">{{m}}</p>
       <div>
         <button class="u-pull-right" @click="msgs = []">Dismiss</button>
       </div>
     </div>
+    </transition>
 
+    <transition name="fade">
     <div v-if="game.State === 'lobby'">
       <hr/>
 
@@ -190,10 +197,13 @@
         <button @click="send({Type: 'join', Data: joinGame})">join</button>
       </div>
     </div>
+    </transition>
 
+    <transition name="fade">
     <div id="connection" v-if="!initial && !connected">
       You have been disconnected. Refresh to reconnect.
     </div>
+    </transition>
 
     <div>
       <h4>Legend</h4>
@@ -475,5 +485,25 @@
 
   .badge {
     font-size: 20px;
+  }
+
+  .fade-enter-active {
+    transition: opacity .3s;
+  }
+  .fade-enter {
+    opacity: 0;
+  }
+
+  .list-item {
+    transition: all 1s;
+    display: inline-block;
+    margin-right: 10px;
+  }
+  .list-enter, .list-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  .list-leave-active {
+    position: absolute;
   }
 </style>
