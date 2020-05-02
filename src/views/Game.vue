@@ -148,6 +148,7 @@
           <th>Leader</th>
           <th>Team</th>
           <th>Rejected by</th>
+          <th></th>
         </tr>
         </thead>
         <tbody>
@@ -167,6 +168,10 @@
               <div v-for="(p, index) in game.Players" v-if="!h.Votes[index]">
                 {{getName(p)}}
               </div>
+            </td>
+            <td>
+              <span v-if="h.Success === true">🙌</span>
+              <span v-if="h.Success === false">💥</span>
             </td>
           </tr>
         </tbody>
