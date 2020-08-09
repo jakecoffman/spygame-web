@@ -8,10 +8,5 @@ module.exports = {
         ws: true
       }
     }
-  },
-  pwa: {
-    workboxOptions: {
-      skipWaiting: true
-    }
-  },
+  }
 }
