@@ -1,6 +1,9 @@
 <template>
-  <div class="hello">
-
+  <div id="connection" v-if="!connected || !game.State">
+    <span v-if="initial || !game.State">Connecting...</span>
+    <span v-else>You have been disconnected. <button class="small" @click="reload()">Refresh</button> to reconnect.</span>
+  </div>
+  <div v-else>
     <transition name="fade">
     <div v-if="game.State === 'lobby'">
       <h2>lobby</h2>
@@ -204,12 +207,6 @@
     </div>
     </transition>
 
-    <transition name="fade">
-    <div id="connection" v-if="!initial && !connected">
-      You have been disconnected. Refresh to reconnect.
-    </div>
-    </transition>
-
     <div>
       <h4>Legend</h4>
       <ul class="unstyled">
@@ -356,6 +353,9 @@
       voteMission(value) {
         this.send({Type: 'votemission', Data: value});
         this.voted = true;
+      },
+      reload() {
+        window.location.reload(true)
       }
     }
   }
@@ -431,16 +431,27 @@
   }
 
   #connection {
-    border-radius: 6px;
-    display: block;
     position: fixed;
-    bottom: 10px;
-    left: 10px;
-    right: 10px;
-    background: #ff342e;
-    color: $text;
-    padding: 10px 40px 10px 20px;
+    top: 100px;
+    width: 100%;
     z-index: 1000;
+
+    display: flex;
+    justify-content: center;
+    align-content: center;
+  }
+
+  #connection .button {
+    margin: 0;
+  }
+
+  #connection > span {
+    background: #000;
+    border: 1px solid $text;
+    border-radius: 5px;
+    color: $text;
+    padding: 2rem;
+    font-size: 2rem;
   }
 
   ul.unstyled li {
